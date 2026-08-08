@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CBT IPA - Bab 1 Pengenalan Sel | Kelas VIII</title>
+<style>
+  :root{
+    --biru: #2563eb;
+    --biru-tua: #1d4ed8;
+    --biru-muda: #eff6ff;
+    --hijau: #16a34a;
+    --hijau-tua: #15803d;
+    --hijau-muda: #f0fdf4;
+    --putih: #ffffff;
+    --abu: #64748b;
+    --abu-muda: #f1f5f9;
+    --merah: #dc2626;
+    --kuning: #d97706;
+    --radius: 16px;
+    --shadow: 0 4px 20px rgba(30, 64, 175, 0.08);
+    --shadow-lg: 0 10px 40px rgba(30, 64, 175, 0.15);
+  }
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html,body{
+    height:100%;
+    font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, var(--biru-muda) 0%, var(--hijau-muda) 100%);
+    color:#1e293b;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #app{ min-height:100vh; display:flex; flex-direction:column; }
+  .page{ display:none; flex:1; flex-direction:column; align-items:center; padding:20px; animation: fadeIn .35s ease; }
+  .page.active{ display:flex; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+  .card{ background: var(--putih); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; width:100%; }
+  
+  /* LOGIN PAGE */
+  #page-login{ justify-content:center; }
+  .login-card{ max-width: 480px; text-align:center; }
+  .login-logo{ width:64px; height:64px; border-radius:50%; background: linear-gradient(135deg, var(--biru), var(--hijau)); display:flex; align-items:center; justify-content:center; margin:0 auto 16px auto; font-size:28px; color:white; font-weight:bold; box-shadow: var(--shadow); }
+  .login-card h1{ font-size:1.4rem; color:var(--biru-tua); margin-bottom:4px; }
+  .login-card .subtitle{ color:var(--abu); font-size:.92rem; margin-bottom:20px; }
+  .info-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; background: var(--abu-muda); border-radius:12px; padding:16px; margin-bottom:22px; text-align:left; }
+  .info-item{ font-size:.82rem; }
+  .info-item .label{ color:var(--abu); display:block; font-size:.72rem; text-transform:uppercase; letter-spacing:.03em; }
+  .info-item .value{ font-weight:600; color:#1e293b; }
+  .form-group{ text-align:left; margin-bottom:18px; }
+  .form-group label{ display:block; font-size:.85rem; font-weight:600; color:#334155; margin-bottom:6px; }
+  select#student-select{ width:100%; padding:13px 14px; border-radius:10px; border:2px solid #dbeafe; font-size:1rem; background:var(--putih); color:#1e293b; outline:none; appearance: none; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 22px; border-radius:12px; border:none; cursor:pointer; font-size:1rem; font-weight:700; width:100%; transition: transform .15s; }
+  .btn:active{ transform: scale(0.98); }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; }
+  .btn-primary{ background: linear-gradient(135deg, var(--biru), var(--hijau)); color:white; }
+  .btn-secondary{ background: var(--abu-muda); color:#334155; }
+  .btn-danger{ background: var(--merah); color:white; }
+  #login-error{ color:var(--merah); font-size:.85rem; margin-top:10px; min-height:18px; font-weight:600; }
+
+  /* EXAM PAGE */
+  #page-exam{ width:100%; max-width:760px; margin:0 auto; padding:14px; user-select:none; }
+  .exam-header{ width:100%; background:var(--putih); border-radius:var(--radius); padding:14px 18px; display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .exam-header .who b{ display:block; font-size:1rem; color:var(--biru-tua); }
+  .exam-header .who span{ color:var(--abu); font-size:0.85rem;}
+  #timer{ font-size:1.3rem; font-weight:800; color:var(--hijau-tua); background: var(--hijau-muda); padding:8px 16px; border-radius:12px; }
+  #timer.timer-warning{ color:var(--merah); background:#fef2f2; animation: pulse 1s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.6;} }
+  .progress-wrap{ width:100%; height:10px; background:var(--abu-muda); border-radius:20px; overflow:hidden; margin-bottom:8px; }
+  #progress-bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--biru), var(--hijau)); border-radius:20px; transition: width .35s ease; }
+  #question-number{ font-size:.85rem; color:var(--abu); font-weight:600; margin-bottom:14px; }
+  .question-card{ margin-bottom:16px; }
+  .badge{ display:inline-block; font-size:.72rem; font-weight:700; padding:5px 12px; border-radius:20px; margin-bottom:14px; text-transform:uppercase; }
+  .badge-pg{ background:var(--biru-muda); color:var(--biru-tua); }
+  .badge-mj{ background:var(--hijau-muda); color:var(--hijau-tua); }
+  .badge-bs{ background:#fef3c7; color:#92400e; }
+  .question-text{ font-size:1.05rem; line-height:1.6; margin-bottom:14px; color:#0f172a; }
+  .question-image{ max-width:100%; border-radius:12px; margin-bottom:16px; display:block; }
+  .mj-left{ background: var(--hijau-muda); border-left:4px solid var(--hijau); padding:14px 16px; border-radius:10px; font-weight:700; margin-bottom:16px; color:var(--hijau-tua); }
+  .options{ display:flex; flex-direction:column; gap:10px; }
+  .options-bs{ flex-direction:row; gap:14px; }
+  .option{ display:flex; align-items:flex-start; gap:12px; padding:13px 14px; border:2px solid #e2e8f0; border-radius:12px; cursor:pointer; }
+  .option.selected{ border-color: var(--biru); background: var(--biru-muda); }
+  .option input[type=radio]{ margin-top:3px; accent-color: var(--biru); width:18px; height:18px; flex-shrink:0; }
+  .option-label{ flex-shrink:0; width:26px; height:26px; border-radius:50%; background:var(--abu-muda); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.85rem; }
+  .option.selected .option-label{ background:var(--biru); color:white; }
+  .option-text{ font-size:.95rem; line-height:1.5; }
+  .option-bs{ flex:1; justify-content:center; text-align:center; font-weight:700; }
+  .exam-nav{ display:flex; gap:10px; padding-bottom:20px; }
+  .exam-nav .btn{ flex:1; }
+
+  /* RESULT PAGE */
+  #page-result{ justify-content:center; }
+  .result-card{ max-width:480px; text-align:center; }
+  .result-icon{ width:70px; height:70px; border-radius:50%; margin:0 auto 14px auto; background: linear-gradient(135deg, var(--biru), var(--hijau)); display:flex; align-items:center; justify-content:center; font-size:32px; color:white; }
+  .result-card h2{ color:var(--biru-tua); margin-bottom:4px; }
+  .result-card .sub{ color:var(--abu); font-size:.85rem; margin-bottom:18px; }
+  .note{ font-size:.85rem; padding:10px 14px; border-radius:10px; margin-bottom:16px; text-align:left; }
+  .note-warning{ background:#fef3c7; color:#92400e; }
+  .note-danger{ background:#fee2e2; color:#991b1b; }
+  .result-row{ display:flex; justify-content:space-between; align-items:center; padding:13px 4px; border-bottom:1px solid #f1f5f9; font-size:.95rem; }
+  .result-score{ background:var(--hijau-muda); border-radius:10px; padding:14px 12px; margin-top:6px; }
+  .result-score strong{ font-size:1.5rem; color:var(--hijau-tua); }
+  .result-status{ margin-top:16px; font-size:.8rem; font-weight:600; }
+  .status-sending{ color:var(--kuning); }
+  .status-success{ color:var(--hijau-tua); }
+  .status-error{ color:var(--merah); }
+
+  /* MODALS */
+  .modal{ position:fixed; inset:0; background:rgba(15,23,42,.55); display:flex; align-items:center; justify-content:center; z-index:999; padding:20px; }
+  .modal.hidden{ display:none; }
+  .modal-box{ background:white; border-radius:var(--radius); padding:26px; max-width:380px; width:100%; text-align:center; box-shadow: var(--shadow-lg); }
+  .modal-box h3{ margin-bottom:10px; font-size:1.15rem; }
+  .modal-box p{ color:#334155; font-size:.9rem; margin-bottom:18px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="page-login" class="page active">
+    <div class="card login-card">
+      <div class="login-logo">IPA</div>
+      <h1>Ujian Berbasis Komputer (CBT)</h1>
+      <p class="subtitle">Bab 1 &mdash; Pengenalan Sel</p>
+      <div class="info-grid">
+        <div class="info-item"><span class="label">Mata Pelajaran</span><span class="value">IPA</span></div>
+        <div class="info-item"><span class="label">Durasi</span><span class="value">45 Menit</span></div>
+        <div class="info-item"><span class="label">Materi</span><span class="value">Bab 1 Pengenalan Sel</span></div>
+        <div class="info-item"><span class="label">Jumlah Soal</span><span class="value">38 Soal</span></div>
+      </div>
+      <div class="form-group">
+        <label for="student-select">Pilih Nama Siswa</label>
+        <select id="student-select">
+          <option value="">-- Pilih Nama --</option>
+        </select>
+      </div>
+      <button id="btn-start" class="btn btn-primary">Mulai Ujian</button>
+      <p id="login-error"></p>
+    </div>
+  </div>
+
+  <div id="page-exam" class="page">
+    <div class="exam-header">
+      <div class="who"><b id="exam-student-name">-</b><span>IPA &middot; Bab 1 Pengenalan Sel</span></div>
+      <div id="timer">45:00</div>
+    </div>
+    <div class="progress-wrap"><div id="progress-bar"></div></div>
+    <div id="question-number">Soal 1 dari 38</div>
+    <div class="card question-card" id="question-container"></div>
+    <div class="exam-nav">
+      <button id="btn-prev" class="btn btn-secondary">&larr; Sebelumnya</button>
+      <button id="btn-next" class="btn btn-secondary">Berikutnya &rarr;</button>
+      <button id="btn-finish" class="btn btn-danger">Selesai</button>
+    </div>
+  </div>
+
+  <div id="page-result" class="page">
+    <div class="card result-card">
+      <div class="result-icon">&#10003;</div>
+      <h2>Ujian Selesai</h2>
+      <p class="sub">Berikut adalah hasil ujian Anda</p>
+      <div id="result-content"></div>
+      <p class="result-status" id="result-status"></p>
+      <button id="btn-retry-send" class="btn btn-primary" style="display:none; margin-top:10px;">Coba Kirim Lagi</button>
+    </div>
+  </div>
+
+  <div id="violation-modal" class="modal hidden">
+    <div class="modal-box">
+      <h3 style="color:var(--merah);">&#9888; Peringatan Pelanggaran</h3>
+      <p id="violation-message"></p>
+      <button id="btn-resume-fullscreen" class="btn btn-primary">Kembali ke Mode Ujian</button>
+    </div>
+  </div>
+
+  <div id="finish-modal" class="modal hidden">
+    <div class="modal-box">
+      <h3 style="color:var(--biru-tua);">Selesaikan Ujian?</h3>
+      <p id="finish-message"></p>
+      <div style="display:flex; gap:10px;">
+        <button id="btn-finish-cancel" class="btn btn-secondary">Batal</button>
+        <button id="btn-finish-confirm" class="btn btn-danger">Ya, Selesaikan</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+    // =========================================================================
+    // URL DARI APPS SCRIPT ANDA SUDAH DIMASUKKAN DI SINI
+    // =========================================================================
+    const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwBcEcPySJ6wIHtWiusbAnrGlCOZPVPJyYJIh3EzKeGsxostD1pzIUI-U37QU_vbCyY/exec";
+
+    const STUDENTS = ["Anita", "Anas", "Anis", "Anwar", "Guan", "Kenard", "Marcella", "Mario", "Marlen", "Winda", "Yudha", "Adel"];
+    const PG_DATA = [{"code": "PG-1", "question": "Ilmuwan yang pertama kali mengamati kotak-kotak kecil pada sayatan gabus pohon ek dan memberi nama bagian tersebut “sel” adalah ....", "options": ["Antonie van Leeuwenhoek", "Robert Hooke", "Joe Hin Tjio", "Robert Boyle", "Charles Darwin"], "correct": 1}, {"code": "PG-2", "question": "Antonie van Leeuwenhoek menyebut organisme-organisme kecil yang ditemukannya pada sampel air kolam dan kerokan gigi dengan istilah ....", "options": ["Sel", "Organel", "Animalcula", "Spesimen", "Protista"], "correct": 2}, {"code": "PG-3", "question": "Pernyataan yang paling tepat untuk menggambarkan pengertian sel adalah ....", "options": ["bagian tubuh yang dapat dilihat langsung tanpa alat bantu", "unit atau bagian terkecil yang menyusun tubuh makhluk hidup", "kumpulan beberapa organ yang bekerja sama", "materi kimia penyusun protoplasma saja", "struktur yang hanya dimiliki oleh tumbuhan"], "correct": 1}, {"code": "PG-4", "question": "Berikut ini yang BUKAN merupakan bunyi teori sel adalah ....", "options": ["seluruh makhluk hidup tersusun atas sel", "sel adalah unit dasar dari struktur dan fungsi makhluk hidup", "seluruh sel berasal dari sel sebelumnya", "sel dapat terbentuk secara tiba-tiba dari benda mati", "teori sel berlaku untuk makhluk hidup besar maupun kecil"], "correct": 3}, {"code": "PG-5", "question": "Perhatikan gambar sel tumbuhan berikut. Bagian yang ditunjuk anak panah pada sel tumbuhan yang berfungsi memberi bentuk kaku serta melindungi sel adalah ....", "image": "https://lh3.googleusercontent.com/d/1PJOuO7ALX0Gt1eYsbSDS90oLT9scQTQE", "options": ["membran sel", "dinding sel", "vakuola", "kloroplas", "nukleus"], "correct": 1}, {"code": "PG-6", "question": "Organel yang berperan sebagai “pusat kendali” karena mengatur seluruh aktivitas di dalam sel adalah ....", "options": ["mitokondria", "vakuola", "nukleus", "kloroplas", "sitoplasma"], "correct": 2}, {"code": "PG-7", "question": "Organel yang berfungsi menghasilkan energi melalui proses respirasi sel adalah ....", "options": ["kloroplas", "mitokondria", "vakuola", "nukleus", "dinding sel"], "correct": 1}, {"code": "PG-8", "question": "Bagian mikroskop yang berfungsi sebagai sumber cahaya untuk menerangi objek yang diamati adalah ....", "options": ["lensa okuler", "revolver", "lampu", "meja objek", "lengan mikroskop"], "correct": 2}, {"code": "PG-9", "question": "Perhatikan gambar mikroskop berikut. Bagian yang ditunjuk anak panah berfungsi untuk ....", "image": "https://lh3.googleusercontent.com/d/18bkEtAAu51KgTIR_QV7F1aG5E4xMG4o5", "options": ["memperbesar bayangan objek yang dilihat oleh mata", "meletakkan preparat/spesimen yang akan diamati", "mengatur banyaknya cahaya yang masuk", "menghubungkan lensa okuler dengan lensa objektif", "menjaga kedudukan mikroskop agar tetap stabil"], "correct": 1}, {"code": "PG-10", "question": "Sebuah mikroskop menggunakan lensa okuler dengan perbesaran 10x dan lensa objektif dengan perbesaran 40x. Perbesaran total bayangan yang dihasilkan adalah ....", "options": ["4x", "40x", "50x", "400x", "4.000x"], "correct": 3}, {"code": "PG-11", "question": "Mikroskop yang menggunakan sinar/radiasi elektron dan mampu menghasilkan perbesaran hingga satu juta kali disebut ....", "options": ["mikroskop cahaya", "mikroskop monokuler", "mikroskop elektron", "mikroskop binokuler", "mikroskop stereo"], "correct": 2}, {"code": "PG-12", "question": "Organisme yang hanya membutuhkan satu sel untuk menjalankan seluruh aktivitas hidupnya disebut organisme ....", "options": ["multiseluler", "uniseluler", "heteroseluler", "autotrof", "heterotrof"], "correct": 1}, {"code": "PG-13", "question": "Berikut ini yang termasuk contoh organisme uniseluler adalah ....", "options": ["kucing", "pohon mangga", "Amoeba", "manusia", "jamur tiram"], "correct": 2}, {"code": "PG-14", "question": "Organel berikut yang HANYA dimiliki oleh sel tumbuhan dan tidak dimiliki oleh sel hewan adalah ....", "options": ["mitokondria dan nukleus", "dinding sel dan kloroplas", "membran sel dan sitoplasma", "vakuola dan mitokondria", "nukleus dan sitoplasma"], "correct": 1}, {"code": "PG-15", "question": "Sel darah merah pada manusia dewasa tidak lagi memiliki nukleus. Manfaat hilangnya nukleus tersebut bagi sel darah merah adalah ....", "options": ["mempercepat pembelahan sel", "memberi ruang lebih banyak untuk mengikat oksigen", "melindungi sel dari infeksi", "mempercepat pembentukan energi", "memperkuat bentuk sel"], "correct": 1}, {"code": "PG-16", "question": "Sel saraf memiliki bentuk yang panjang karena berfungsi untuk ....", "options": ["menyimpan cadangan makanan", "menghasilkan energi dalam jumlah besar", "menyampaikan informasi/rangsang", "melakukan fotosintesis", "menyerap air dari dalam tanah"], "correct": 2}, {"code": "PG-17", "question": "Sekelompok sel otot jantung yang memiliki bentuk dan fungsi yang sama akan bekerja sama membentuk ....", "options": ["organ", "jaringan", "sistem organ", "organisme", "organel"], "correct": 1}, {"code": "PG-18", "question": "Urutan tingkatan organisasi kehidupan dari yang paling sederhana menuju yang paling kompleks yang tepat adalah ....", "options": ["Organisme - Sistem Organ - Organ - Jaringan - Sel", "Sel - Jaringan - Organ - Sistem Organ - Organisme", "Jaringan - Sel - Organ - Organisme - Sistem Organ", "Sel - Organ - Jaringan - Sistem Organ - Organisme", "Organ - Jaringan - Sel - Sistem Organ - Organisme"], "correct": 1}];
+    const KOLOM_B = [{"letter": "a", "text": "Tempat berlangsungnya proses fotosintesis"}, {"letter": "b", "text": "Cairan tempat berlangsungnya reaksi kimia di dalam sel"}, {"letter": "c", "text": "Mengatur seluruh aktivitas di dalam sel"}, {"letter": "d", "text": "Menyimpan air, makanan, dan sisa hasil metabolisme"}, {"letter": "e", "text": "Mengatur keluar-masuknya zat dari dan ke dalam sel"}, {"letter": "f", "text": "Memperbesar bayangan yang dilihat langsung oleh mata pengamat"}, {"letter": "g", "text": "Memperbesar objek yang diamati sebelum diteruskan ke lensa okuler"}, {"letter": "h", "text": "Tempat berlangsungnya respirasi sel penghasil energi"}, {"letter": "i", "text": "Melindungi dan memberi bentuk tetap pada sel tumbuhan"}, {"letter": "j", "text": "Istilah yang digunakan Leeuwenhoek untuk organisme sangat kecil yang diamatinya"}];
+    const MJ_DATA = [{"code": "MJ-1", "left": "Nukleus", "correct": "c"}, {"code": "MJ-2", "left": "Mitokondria", "correct": "h"}, {"code": "MJ-3", "left": "Kloroplas", "correct": "a"}, {"code": "MJ-4", "left": "Dinding sel", "correct": "i"}, {"code": "MJ-5", "left": "Vakuola", "correct": "d"}, {"code": "MJ-6", "left": "Sitoplasma", "correct": "b"}, {"code": "MJ-7", "left": "Membran sel", "correct": "e"}, {"code": "MJ-8", "left": "Lensa okuler", "correct": "f"}, {"code": "MJ-9", "left": "Lensa objektif", "correct": "g"}, {"code": "MJ-10", "left": "Animalcula", "correct": "j"}];
+    const BS_DATA = [{"code": "BS-1", "statement": "Sel merupakan unit atau bagian terkecil yang menyusun tubuh makhluk hidup.", "correct": "BENAR"}, {"code": "BS-2", "statement": "Robert Hooke adalah ilmuwan yang menciptakan mikroskop elektron pertama kali.", "correct": "SALAH"}, {"code": "BS-3", "statement": "Menurut teori sel, seluruh makhluk hidup tersusun atas sel.", "correct": "BENAR"}, {"code": "BS-4", "statement": "Mikroskop binokuler memiliki satu buah lensa okuler.", "correct": "SALAH"}, {"code": "BS-5", "statement": "Semakin besar perbesaran lensa objektif yang digunakan, semakin sedikit jumlah objek yang tertangkap dalam bidang pandang.", "correct": "BENAR"}, {"code": "BS-6", "statement": "Dinding sel dimiliki oleh sel hewan maupun sel tumbuhan.", "correct": "SALAH"}, {"code": "BS-7", "statement": "Bakteri merupakan contoh organisme multiseluler.", "correct": "SALAH"}, {"code": "BS-8", "statement": "Jaringan terbentuk dari kumpulan sel yang memiliki bentuk dan fungsi yang sama.", "correct": "BENAR"}, {"code": "BS-9", "statement": "Sel otot memiliki banyak nukleus dan mitokondria untuk menunjang fungsinya sebagai alat gerak.", "correct": "BENAR"}, {"code": "BS-10", "statement": "Urutan organisasi kehidupan dari yang paling kompleks ke yang paling sederhana adalah sel - jaringan - organ - sistem organ - organisme.", "correct": "SALAH"}];
+
+    const EXAM_DURATION_MS = 45 * 60 * 1000;
+    const MAX_VIOLATIONS   = 3;
+    const TOTAL_SOAL       = 38;
+
+    let state = null;
+    let currentIndex = 0;
+    let timerInterval = null;
+    let lastViolationTime = 0;
+
+    function shuffle(array) {
+      const arr = array.slice();
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function sessionKey(name) { return "cbt_ipa_sel_kelas8_" + name; }
+    function persistSession() { if (state) localStorage.setItem(sessionKey(state.studentName), JSON.stringify(state)); }
+    function loadSession(name) {
+      const raw = localStorage.getItem(sessionKey(name));
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch (e) { return null; }
+    }
+
+    function goToPage(id) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+    }
+
+    function buildSessionQuestions() {
+      const questions = [];
+      const pgOrder = shuffle(PG_DATA.map((_, i) => i));
+      pgOrder.forEach(i => {
+        const src = PG_DATA[i];
+        const optOrder = shuffle(src.options.map((_, k) => k));
+        const options = optOrder.map(k => src.options[k]);
+        const correct = optOrder.indexOf(src.correct);
+        questions.push({ type: "PG", code: src.code, question: src.question, image: src.image || null, options: options, correct: correct, answer: null });
+      });
+
+      const mjOrder = shuffle(MJ_DATA.map((_, i) => i));
+      mjOrder.forEach(i => {
+        const src = MJ_DATA[i];
+        const optOrder = shuffle(KOLOM_B.map((_, k) => k));
+        const options = optOrder.map(k => KOLOM_B[k]);
+        questions.push({ type: "MJ", code: src.code, left: src.left, options: options, correctLetter: src.correct, answer: null });
+      });
+
+      const bsOrder = shuffle(BS_DATA.map((_, i) => i));
+      bsOrder.forEach(i => {
+        const src = BS_DATA[i];
+        questions.push({ type: "BS", code: src.code, statement: src.statement, correct: src.correct, answer: null });
+      });
+
+      return questions;
+    }
+
+    function gradeSession(questions) {
+      let benar = 0;
+      const map = {};
+      questions.forEach(q => {
+        let isCorrect = false;
+        if (q.type === "PG") isCorrect = (q.answer !== null && q.answer === q.correct);
+        else if (q.type === "MJ") isCorrect = (q.answer !== null && q.answer === q.correctLetter);
+        else if (q.type === "BS") isCorrect = (q.answer !== null && q.answer === q.correct);
+        map[q.code] = isCorrect ? 1 : 0;
+        if (isCorrect) benar++;
+      });
+      return { benar: benar, salah: questions.length - benar, map: map };
+    }
+
+    function buildDetailJawaban(map) {
+      const detail = [];
+      PG_DATA.forEach(q => detail.push(map[q.code] !== undefined ? map[q.code] : 0));
+      MJ_DATA.forEach(q => detail.push(map[q.code] !== undefined ? map[q.code] : 0));
+      BS_DATA.forEach(q => detail.push(map[q.code] !== undefined ? map[q.code] : 0));
+      return detail;
+    }
+
+    function setSendStatus(kind, text) {
+      const statusEl = document.getElementById("result-status");
+      if (!statusEl) return;
+      statusEl.textContent = text;
+      statusEl.className = "result-status";
+      if (kind) statusEl.classList.add("status-" + kind);
+    }
+
+    // =========================================================================
+    // FUNGSI PENGIRIMAN YANG SUDAH DIPERBAIKI (MODE NO-CORS DITAMBAHKAN)
+    // =========================================================================
+    async function sendResultToServer(nama, skor, pelanggaran, detail_jawaban) {
+      const retryBtn = document.getElementById("btn-retry-send");
+      setSendStatus("sending", "⏳ Mengirim hasil ujian ke server...");
+      if (retryBtn) retryBtn.style.display = "none";
+
+      try {
+        const formData = new URLSearchParams();
+        formData.append("nama", nama);
+        formData.append("skor", skor);
+        formData.append("pelanggaran", pelanggaran);
+        formData.append("detail_jawaban", JSON.stringify(detail_jawaban));
+
+        // Penggunaan mode no-cors untuk memastikan data lewat tanpa terblokir
+        await fetch(GAS_ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          body: formData
+        });
+
+        setSendStatus("success", "✅ Hasil ujian telah berhasil disimpan!");
+      } catch (err) {
+        setSendStatus("error", "❌ Gagal mengirim hasil. Periksa koneksi internet Anda.");
+        if (retryBtn) retryBtn.style.display = "inline-flex";
+      }
+    }
+
+    document.getElementById("btn-retry-send").addEventListener("click", () => {
+      if (!state || !state.result) return;
+      sendResultToServer(state.studentName, state.result.skor, state.result.violations, state.result.detail_jawaban);
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const sel = document.getElementById("student-select");
+      STUDENTS.forEach(name => {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        sel.appendChild(opt);
+      });
+    });
+
+    document.getElementById("btn-start").addEventListener("click", () => {
+      const name = document.getElementById("student-select").value;
+      const errorEl = document.getElementById("login-error");
+      errorEl.textContent = "";
+
+      if (!name) { errorEl.textContent = "Silakan pilih nama Anda terlebih dahulu."; return; }
+
+      const existing = loadSession(name);
+      if (existing && !existing.finished && Date.now() < existing.endTime) {
+        state = existing;
+      } else if (existing && !existing.finished && Date.now() >= existing.endTime) {
+        state = existing;
+        finishExam(true, "waktu-habis");
+        return;
+      } else {
+        state = { studentName: name, startTime: Date.now(), endTime: Date.now() + EXAM_DURATION_MS, questions: buildSessionQuestions(), violations: 0, finished: false, result: null };
+        persistSession();
+      }
+      currentIndex = 0;
+      startExam();
+    });
+
+    function startExam() {
+      document.getElementById("exam-student-name").textContent = state.studentName;
+      goToPage("page-exam");
+      if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().catch(() => {}); }
+      renderQuestion();
+      startTimer();
+    }
+
+    function startTimer() {
+      updateTimerDisplay();
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        const remain = state.endTime - Date.now();
+        if (remain <= 0) {
+          clearInterval(timerInterval);
+          updateTimerDisplay(0);
+          finishExam(true, "waktu-habis");
+        } else {
+          updateTimerDisplay(remain);
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay(remainMs) {
+      if (remainMs === undefined) remainMs = state.endTime - Date.now();
+      if (remainMs < 0) remainMs = 0;
+      const totalSec = Math.floor(remainMs / 1000);
+      const m = String(Math.floor(totalSec / 60)).padStart(2, "0");
+      const s = String(totalSec % 60).padStart(2, "0");
+      const timerEl = document.getElementById("timer");
+      timerEl.textContent = m + ":" + s;
+      timerEl.classList.toggle("timer-warning", remainMs < 5 * 60 * 1000);
+    }
+
+    function renderQuestion() {
+      const q = state.questions[currentIndex];
+      const total = state.questions.length;
+      document.getElementById("question-number").textContent = "Soal " + (currentIndex + 1) + " dari " + total;
+      document.getElementById("progress-bar").style.width = (((currentIndex + 1) / total) * 100) + "%";
+      const container = document.getElementById("question-container");
+      let html = "";
+
+      if (q.type === "PG") {
+        html += '<div class="badge badge-pg">Pilihan Ganda</div><p class="question-text">' + q.question + '</p>';
+        if (q.image) html += '<img class="question-image" src="' + q.image + '" alt="Gambar soal">';
+        html += '<div class="options">';
+        const labels = ["A", "B", "C", "D", "E"];
+        q.options.forEach((opt, idx) => {
+          const isSelected = q.answer === idx;
+          html += '<label class="option' + (isSelected ? ' selected' : '') + '"><input type="radio" name="q-answer" value="' + idx + '"' + (isSelected ? ' checked' : '') + '><span class="option-label">' + labels[idx] + '</span><span class="option-text">' + opt + '</span></label>';
+        });
+        html += '</div>';
+      } else if (q.type === "MJ") {
+        html += '<div class="badge badge-mj">Menjodohkan</div><p class="question-text">Jodohkan pernyataan berikut dengan jawaban yang paling tepat:</p><div class="mj-left">' + q.left + '</div><div class="options">';
+        q.options.forEach(opt => {
+          const isSelected = q.answer === opt.letter;
+          html += '<label class="option' + (isSelected ? ' selected' : '') + '"><input type="radio" name="q-answer" value="' + opt.letter + '"' + (isSelected ? ' checked' : '') + '><span class="option-text">' + opt.text + '</span></label>';
+        });
+        html += '</div>';
+      } else if (q.type === "BS") {
+        html += '<div class="badge badge-bs">Benar / Salah</div><p class="question-text">' + q.statement + '</p><div class="options options-bs">';
+        ["BENAR", "SALAH"].forEach(val => {
+          const isSelected = q.answer === val;
+          html += '<label class="option option-bs' + (isSelected ? ' selected' : '') + '"><input type="radio" name="q-answer" value="' + val + '"' + (isSelected ? ' checked' : '') + '><span class="option-text">' + val + '</span></label>';
+        });
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
+      container.querySelectorAll('input[type=radio]').forEach(input => {
+        input.addEventListener("change", (e) => {
+          let val = e.target.value;
+          if (q.type === "PG") val = parseInt(val, 10);
+          q.answer = val;
+          persistSession();
+          container.querySelectorAll(".option").forEach(l => l.classList.remove("selected"));
+          e.target.closest(".option").classList.add("selected");
+        });
+      });
+
+      document.getElementById("btn-prev").disabled = (currentIndex === 0);
+      document.getElementById("btn-next").disabled = (currentIndex === total - 1);
+    }
+
+    document.getElementById("btn-prev").addEventListener("click", () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    document.getElementById("btn-next").addEventListener("click", () => { if (currentIndex < state.questions.length - 1) { currentIndex++; renderQuestion(); } });
+    
+    document.getElementById("btn-finish").addEventListener("click", () => {
+      const unanswered = state.questions.filter(q => q.answer === null || q.answer === undefined).length;
+      const prefix = unanswered > 0 ? ("Masih ada " + unanswered + " soal yang belum dijawab. ") : "";
+      document.getElementById("finish-message").textContent = prefix + "Apakah Anda yakin ingin menyelesaikan ujian sekarang?";
+      document.getElementById("finish-modal").classList.remove("hidden");
+    });
+    document.getElementById("btn-finish-cancel").addEventListener("click", () => { document.getElementById("finish-modal").classList.add("hidden"); });
+    document.getElementById("btn-finish-confirm").addEventListener("click", () => { document.getElementById("finish-modal").classList.add("hidden"); finishExam(false, "manual"); });
+
+    function finishExam(auto, reason) {
+      if (!state || state.finished) return;
+      state.finished = true;
+      clearInterval(timerInterval);
+      if (document.fullscreenElement && document.exitFullscreen) { document.exitFullscreen().catch(() => {}); }
+
+      const graded = gradeSession(state.questions);
+      const detail_jawaban = buildDetailJawaban(graded.map);
+      const skor = Math.round((graded.benar / TOTAL_SOAL) * 10000) / 100;
+
+      state.result = { benar: graded.benar, salah: graded.salah, skor: skor, violations: state.violations, detail_jawaban: detail_jawaban };
+      persistSession();
+      showResultPage(state.result, auto, reason);
+      sendResultToServer(state.studentName, skor, state.violations, detail_jawaban);
+    }
+
+    function showResultPage(result, auto, reason) {
+      goToPage("page-result");
+      let noteHtml = "";
+      if (reason === "pelanggaran") noteHtml = '<div class="note note-danger">Ujian diselesaikan otomatis karena batas pelanggaran (' + MAX_VIOLATIONS + 'x).</div>';
+      else if (reason === "waktu-habis") noteHtml = '<div class="note note-warning">Ujian diselesaikan otomatis karena waktu habis.</div>';
+      else if (reason === "sudah-selesai") noteHtml = '<div class="note">Anda sudah menyelesaikan ujian ini sebelumnya.</div>';
+
+      document.getElementById("result-content").innerHTML = noteHtml +
+        '<div class="result-row"><span>Nama Siswa</span><strong>' + state.studentName + '</strong></div>' +
+        '<div class="result-row"><span>Jumlah Benar</span><strong>' + result.benar + '</strong></div>' +
+        '<div class="result-row"><span>Jumlah Salah</span><strong>' + result.salah + '</strong></div>' +
+        '<div class="result-row"><span>Jumlah Pelanggaran</span><strong>' + result.violations + '</strong></div>' +
+        '<div class="result-row result-score"><span>Nilai Akhir</span><strong>' + result.skor.toFixed(2) + '</strong></div>';
+
+      if (reason === "sudah-selesai") setSendStatus(null, "");
+    }
+
+    function examActive() {
+      const finishModalOpen = !document.getElementById("finish-modal").classList.contains("hidden");
+      return !!(state && !state.finished && !finishModalOpen && document.getElementById("page-exam").classList.contains("active"));
+    }
+
+    function registerViolation(reason) {
+      if (!examActive()) return;
+      const now = Date.now();
+      if (now - lastViolationTime < 1200) return;
+      lastViolationTime = now;
+      state.violations++;
+      persistSession();
+
+      document.getElementById("violation-message").textContent = "Terdeteksi: " + reason + ". Pelanggaran ke-" + state.violations + " dari maksimal " + MAX_VIOLATIONS + ".";
+      document.getElementById("violation-modal").classList.remove("hidden");
+      if (state.violations >= MAX_VIOLATIONS) {
+        document.getElementById("violation-modal").classList.add("hidden");
+        finishExam(true, "pelanggaran");
+      }
+    }
+
+    document.getElementById("btn-resume-fullscreen").addEventListener("click", () => {
+      document.getElementById("violation-modal").classList.add("hidden");
+      if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().catch(() => {}); }
+    });
+
+    document.addEventListener("visibilitychange", () => { if (document.hidden) registerViolation("Berpindah tab atau aplikasi"); });
+    window.addEventListener("blur", () => { registerViolation("Kehilangan fokus jendela browser"); });
+    document.addEventListener("fullscreenchange", () => { if (examActive() && !document.fullscreenElement) registerViolation("Keluar dari mode Fullscreen"); });
+    document.addEventListener("contextmenu", (e) => { if (examActive()) { e.preventDefault(); registerViolation("Klik kanan"); } });
+    document.addEventListener("copy", (e) => { if (examActive()) { e.preventDefault(); registerViolation("Copy"); } });
+    document.addEventListener("paste", (e) => { if (examActive()) { e.preventDefault(); registerViolation("Paste"); } });
+    document.addEventListener("cut", (e) => { if (examActive()) { e.preventDefault(); registerViolation("Cut"); } });
+    document.addEventListener("dragstart", (e) => { if (examActive()) { e.preventDefault(); registerViolation("Drag konten"); } });
+    document.addEventListener("selectstart", (e) => { if (examActive()) { e.preventDefault(); } });
+    
+    document.addEventListener("keydown", (e) => {
+      if (!examActive()) return;
+      const key = (e.key || "").toUpperCase();
+      if (key === "F12" || (e.ctrlKey && e.shiftKey && (key === "I" || key === "J" || key === "C")) || (e.ctrlKey && key === "U")) {
+        e.preventDefault();
+        registerViolation("Mencoba membuka inspect/source");
+      }
+    });
+
+    window.addEventListener("beforeunload", (e) => {
+      if (examActive()) { persistSession(); e.preventDefault(); e.returnValue = ""; }
+    });
+</script>
+</body>
+</html>
